@@ -18,6 +18,7 @@ const useFetch = (url) => {
             const json = await res.json()
             setData(json)
             setError(null)
+
         } catch (err) {
             setError("Erro ao carregar os dados: " + err.message)
         }
@@ -30,6 +31,7 @@ const useFetch = (url) => {
 
     // POST
     const criarTarefa = async (tarefa) => {
+        setLoading(true);
         try {
             const res = await fetch(url, {
                 method: "POST",
@@ -45,10 +47,12 @@ const useFetch = (url) => {
         } catch (err) {
             setError("Erro ao criar tarefa")
         }
+        setLoading(false);
     }
 
     // PUT / UPDATE
     const editarTarefa = async (tarefa) => {
+        setLoading(true);
         try {
             const res = await fetch(`${url}/${tarefa.id}`, {
                 method: "PUT",
@@ -64,10 +68,12 @@ const useFetch = (url) => {
         } catch (err) {
             setError("Erro ao editar tarefa")
         }
+        setLoading(false);
     }
 
     // DELETE
     const deletarTarefa = async (id) => {
+        setLoading(true);
         try {
             const res = await fetch(`${url}/${id}`, {
                 method: "DELETE",
@@ -83,6 +89,7 @@ const useFetch = (url) => {
         } catch (err) {
             setError("Erro ao deletar tarefa")
         }
+        setLoading(false);
     }
 
     // Buscar por ID
