@@ -1,31 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
 const useFetch = (url) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [callFetch, setCallFetch] = useState(0);
+    const [data, setData] = useState(null)
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [callFetch, setCallFetch] = useState(0)
 
-  // GET
+    // GET
     useEffect(() => {
         const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await fetch(url);
-            const json = await res.json();
-            setData(json);
-            setError(null);
+            const res = await fetch(url)
+
+            if (!res.ok) throw new Error("Erro ao carregar os dados")
+
+            const json = await res.json()
+            setData(json)
+            setError(null)
         } catch (err) {
-            setError("Erro ao carregar os dados");
+            setError("Erro ao carregar os dados: " + err.message)
         }
         
         setLoading(false);
         };
 
         fetchData();
-    }, [url, callFetch]);
+    }, [url, callFetch]) // callFetch aqui para forçar o useEffect a refazer o GET quando alterado
 
-  // POST
+    // POST
     const criarTarefa = async (tarefa) => {
         try {
             const res = await fetch(url, {
@@ -33,15 +36,18 @@ const useFetch = (url) => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(tarefa),
             });
-            const json = await res.json();
-            setCallFetch((prev) => prev + 1);
-            return json;
-        } catch (err) {
-            setError("Erro ao criar tarefa");
-        }
-    };
 
-  // PUT / UPDATE
+            if(!res.ok) throw new Error("Erro ao criar tarefa")
+
+            const json = await res.json()
+            setCallFetch((prev) => prev + 1)
+            return json
+        } catch (err) {
+            setError("Erro ao criar tarefa")
+        }
+    }
+
+    // PUT / UPDATE
     const editarTarefa = async (tarefa) => {
         try {
             const res = await fetch(`${url}/${tarefa.id}`, {
@@ -49,15 +55,18 @@ const useFetch = (url) => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(tarefa),
             });
-            const json = await res.json();
-            setCallFetch((prev) => prev + 1);
-            return json;
-        } catch (err) {
-            setError("Erro ao editar tarefa");
-        }
-    };
 
-  // DELETE
+            if(!res.ok) throw new Error("Erro ao editar tarefa")
+
+            const json = await res.json()
+            setCallFetch((prev) => prev + 1)
+            return json
+        } catch (err) {
+            setError("Erro ao editar tarefa")
+        }
+    }
+
+    // DELETE
     const deletarTarefa = async (id) => {
         try {
             const res = await fetch(`${url}/${id}`, {
@@ -66,30 +75,32 @@ const useFetch = (url) => {
                 body: JSON.stringify([id]),
             });
 
+            if (!res.ok) throw new Error("Erro ao deletar a tarefa")
+
             const json = await res.json();
-            setCallFetch((prev) => prev + 1);
+            setCallFetch((prev) => prev + 1)
             return json;
         } catch (err) {
-            setError("Erro ao deletar tarefa");
+            setError("Erro ao deletar tarefa")
         }
-    };
+    }
 
-  // Buscar por ID
+    // Buscar por ID
     const buscarPorId = async (id) => {
         try {
             const res = await fetch(`${url}/${id}`);
+            
+            if(!res.ok) throw new Error("Tarefa não encontrada")
+            
             const json = await res.json();
-            if (json.success) return json.tarefa;
-            else throw new Error("Tarefa não encontrada");
+            return json
         } catch (err) {
             console.error(err);
             return null;
         }
-    };
+    }
 
-  return {
-    data, error, loading, criarTarefa, editarTarefa, deletarTarefa, buscarPorId,
-  };
+    return {data, error, loading, criarTarefa, editarTarefa, deletarTarefa, buscarPorId}
 };
 
 export default useFetch;

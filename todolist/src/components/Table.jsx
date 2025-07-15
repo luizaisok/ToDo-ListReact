@@ -6,7 +6,8 @@ import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 function Table({url}) {
-    const { data, editarTarefa, deletarTarefa } = useFetch(url);
+    const { data, editarTarefa, deletarTarefa, loading, error } = useFetch(url);
+    
     const items = data?.tarefas || [];
 
     const toggleStatus = async (tarefa) => {
@@ -26,7 +27,9 @@ function Table({url}) {
     };
 
     const navigate = useNavigate();
-
+    
+    if (loading) return <p className="text-center pt-10">Carregando tarefas...</p>;
+    if (error) return <p  className="text-center pt-10 text-red-900">{error}</p>;
     return (
         <div className="py-10 px-4 mx-auto">
             <main>
