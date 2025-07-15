@@ -1,0 +1,13 @@
+.App{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body{
+  font-family: "Cascadia Mono", sans-serif;
+  color: #36261b;
+  height: 100vh;
+  background-color: #d4cdc0;
+  margin: 0;
+}
